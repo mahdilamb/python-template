@@ -72,7 +72,7 @@ def create_parser():
         type=str,
         help="The name of the package to create. Defaults to the name of the current "
         + "folder.",
-        default=os.path.basename(os.path.dirname(__file__)),
+        default=os.path.basename(os.path.dirname(os.path.abspath(__file__))),
         nargs="?",
     )
     parser.add_argument(
