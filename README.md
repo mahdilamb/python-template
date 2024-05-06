@@ -6,6 +6,14 @@ This is the placeholder for the temporary python project template. Please run, t
 python3 init.py name-of-package
 ```
 
+Alternative, run (this uses the current directory name as the name of the package.):
+
+```shell
+python3 init.py
+```
+
+
+
 This will:
 
 * Update the temporary variable `temporary-python-project` to the project name

@@ -54,13 +54,25 @@ def update_file(file: str, pattern: re.Pattern | str, replacement: str = "") -> 
         fp.writelines(result)
 
 
+def multi_update_file(file: str, updates: dict[re.Pattern | str, str]):
+    """Apply multiple updates to a file."""
+    with open(file) as w_fp:
+        result = w_fp.read()
+        for pattern, replacement in updates.items():
+            result = create_replacer(pattern=pattern, replacement=replacement)(result)
+    with open(file, "w") as fp:
+        fp.writelines(result.splitlines(keepends=True))
+
+
 def create_parser():
     """Create the parser for CLI arguments."""
     parser = argparse.ArgumentParser("Python template initializer.")
     parser.add_argument(
         "package-name",
         type=str,
-        help="The name of the package to create.",
+        help="The name of the package to create. Defaults to the name of the current "
+        + "folder.",
+        default=os.path.dirname(__file__),
     )
     parser.add_argument(
         "--src",
@@ -74,8 +86,10 @@ def create_parser():
 def main(args: Sequence[str] | None = None):
     """Update the package names."""
     values = vars(create_parser().parse_args(args))
-    print(values)
-    package_name = normalize(values["package-name"])
+
+    package_name = values["package-name"]
+    folder_name = normalize(package_name)
+
     with open("README.md", "w") as fp:
         fp.write(
             f"""# {TEMP_NAME}
@@ -89,7 +103,10 @@ def main(args: Sequence[str] | None = None):
         ".github/workflows/qc-and-test.yaml",
     ):
         print(f"Updating '{file}'.")
-        update_file(file, TEMP_NAME, package_name)
+        multi_update_file(
+            file,
+            {TEMP_NAME: package_name, normalize(TEMP_NAME): folder_name},
+        )
     for file in os.listdir(workflow_dir := ".github/workflows"):
         print(f"Updating '{file}'.")
         update_file(
@@ -100,15 +117,15 @@ def main(args: Sequence[str] | None = None):
             ),
         )
     print("Cleaning up...")
-    if os.path.exists(package_name):
-        print(f"'./{package_name}/' already exists...deleting!")
-        shutil.rmtree(package_name)
-    shutil.move(values["src"], package_name)
+    if os.path.exists(folder_name):
+        print(f"'./{folder_name}/' already exists...deleting!")
+        shutil.rmtree(folder_name)
+    shutil.move(values["src"], folder_name)
     for src in SRC_FOLDERS:
         if src == values["src"]:
             continue
         print(f"Deleting './{src}'.")
-        shutil.rmtree(package_name)
+        shutil.rmtree(src)
     os.remove(__file__)
 
 
