@@ -25,7 +25,7 @@ def normalize(name: str) -> str:
     str
         The normalized package name.
     """
-    return re.sub(r"[-_.]+", "-", name).lower()
+    return re.sub(r"[-_.]+", "_", name).lower()
 
 
 def create_replacer(
