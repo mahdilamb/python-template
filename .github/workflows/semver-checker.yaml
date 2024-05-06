@@ -78,7 +78,6 @@ jobs:
           import re
           from typing import Literal, TypeAlias, get_args
 
-
           SemverAttribute: TypeAlias = Literal[
               "major",
               "minor",
