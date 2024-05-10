@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Temporary file used to initialize the package."""
+
 import argparse
 import glob
 import os
@@ -102,6 +103,7 @@ def main(args: Sequence[str] | None = None):
         "README.md",
         "Makefile",
         ".github/workflows/qc-and-test.yaml",
+        "Dockerfile",
     ):
         print(f"Updating '{file}'.")
         multi_update_file(
