@@ -1,21 +1,28 @@
 [project]
-dynamic = ["version", "readme", "dependencies"]
+dynamic = ["version", "dependencies"]
 license = {file = "LICENCE"}
 name = "temporary-python-project"
+readme = "README.md"
 requires-python = ">=3.11"
-
-[tool.setuptools.dynamic]
-dependencies = {file = "requirements.txt"}
-readme = {file = "README.md"}
-version = {attr = "temporary_python_project.__version__"}
 
 [project.optional-dependencies]
 all = ["temporary-python-project[dev]"]
 dev = ["pip-tools", "ruff", "temporary-python-project[test]"]
 test = ["pytest", "pytest-cov"]
 
+[tool.setuptools.dynamic]
+dependencies = {file = "requirements.txt"}
+version = {attr = "temporary_python_project.__version__"}
+
 [tool.setuptools.package-dir]
 "temporary_python_project" = "temporary_python_project"
+
+[tool.hatch.version]
+path = "temporary_python_project/__init__.py"
+pattern = "__version__ = '(?P<version>[^']+)'"
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
 
 [tool.pytest.ini_options]
 addopts = [
