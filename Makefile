@@ -1,5 +1,6 @@
 .PHONY: help requirements install install-all qc test ruff mypy prune-branches docker-build
 default: help
+MAKEFLAGS += --no-print-directory
 
 PACKAGE_DIR=temporary_python_project
 SRC_FILES=${PACKAGE_DIR} tests
@@ -8,9 +9,11 @@ DOCKER_TAG=temporary-python-project
 
 REQUIREMENTS_SUFFIX=$(shell [ -z ${extras} ] || echo '-${extras}')
 REQUIREMENTS_MD5_FILE=$(shell [ -z ${extras} ] && echo 'requirements.in.md5' || echo 'pyproject.toml.${extras}.md5')
+REQUIREMENTS_FILE=requirements${REQUIREMENTS_SUFFIX}.txt
 requirements: # Compile the pinned requirements if they've changed.
 	@[ -f "${REQUIREMENTS_MD5_FILE}" ] && md5sum --status -c ${REQUIREMENTS_MD5_FILE} ||\
-	( md5sum requirements.in $(shell [ -z ${extras} ] || echo pyproject.toml) > ${REQUIREMENTS_MD5_FILE} && (python3 -c 'import piptools' || pip install pip-tools ) && pip-compile $(shell echo '${REQUIREMENTS_MD5_FILE}' | grep -oP '^([^\.]*?\.)[^\.]*' ) $(shell [ -z ${extras} ] || echo '--extra ${extras}' ) -o requirements${REQUIREMENTS_SUFFIX}.txt )
+	( md5sum requirements.in $(shell [ -z ${extras} ] || echo pyproject.toml) > ${REQUIREMENTS_MD5_FILE} && rm -rf ${REQUIREMENTS_FILE} );\
+	[ ! -f "${REQUIREMENTS_FILE}" ] && (python3 -c 'import piptools' || pip install pip-tools ) && pip-compile $(shell echo '${REQUIREMENTS_MD5_FILE}' | grep -oP '^([^\.]*?\.)[^\.]*' ) $(shell [ -z ${extras} ] || echo '--extra ${extras}' ) -o ${REQUIREMENTS_FILE} 
 
 requirements: extras=
 
