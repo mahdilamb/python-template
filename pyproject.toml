@@ -19,7 +19,7 @@ version = {attr = "temporary_python_project.__version__"}
 
 [tool.hatch.version]
 path = "temporary_python_project/__init__.py"
-pattern = "__version__ = '(?P<version>[^']+)'"
+pattern = '__version__ = "(?P<version>[^"]+)"'
 
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements.txt"]
